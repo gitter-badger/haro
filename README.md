@@ -1,5 +1,5 @@
 # haro
-Harō is a modern immutable DataStore build on ES6 that can be wired to an API. It is a
+Harō is a modern immutable DataStore that can be wired to an API. It is a
 partially persistent data structure, by maintaining version sets of records in `versions`.
 
 [![build status](https://secure.travis-ci.org/avoidwork/haro.svg)](http://travis-ci.org/avoidwork/haro)
