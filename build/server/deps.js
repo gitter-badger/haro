@@ -26,9 +26,9 @@ var _tinyTuple = require("tiny-tuple");
 
 var _tinyTuple2 = _interopRequireDefault(_tinyTuple);
 
-exports.Promise_import = _es6Promise2["default"];
-exports.Map_import = _es6Map2["default"];
-exports.Set_import = _es6Set2["default"];
-exports.fetch_import = _nodeFetch2["default"];
-exports.tuple_import = _tinyTuple2["default"];
+exports.Promise = _es6Promise2["default"];
+exports.Map = _es6Map2["default"];
+exports.Set = _es6Set2["default"];
+exports.fetch = _nodeFetch2["default"];
+exports.tuple = _tinyTuple2["default"];
 //# sourceMappingURL=deps.js.map

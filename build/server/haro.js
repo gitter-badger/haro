@@ -8,11 +8,15 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var _deps = require("./deps");
+
+var _utility = require("./utility");
+
 var Haro = (function () {
 	function Haro(data) {
 		_classCallCheck(this, Haro);
 
-		this.data = new Map();
+		this.data = new _deps.Map();
 		this.config = {
 			method: "get",
 			credentials: false,
@@ -26,7 +30,7 @@ var Haro = (function () {
 		this.source = "";
 		this.total = 0;
 		this.uri = "";
-		this.versions = new Map();
+		this.versions = new _deps.Map();
 
 		if (data) {
 			this.batch(data, "set");
@@ -38,7 +42,7 @@ var Haro = (function () {
 		value: function batch(args, type) {
 			var _this = this;
 
-			var defer = deferred(),
+			var defer = (0, _utility.deferred)(),
 			    promises = [];
 
 			if (type === "del") {
@@ -51,7 +55,7 @@ var Haro = (function () {
 				});
 			}
 
-			Promise.all(promises).then(function (arg) {
+			_deps.Promise.all(promises).then(function (arg) {
 				defer.resolve(arg);
 			}, function (e) {
 				defer.reject(e);
@@ -76,7 +80,7 @@ var Haro = (function () {
 
 			var batch = arguments[1] === undefined ? false : arguments[1];
 
-			var defer = deferred(),
+			var defer = (0, _utility.deferred)(),
 			    index = undefined;
 
 			var next = function next() {
@@ -124,12 +128,12 @@ var Haro = (function () {
 			var result = [];
 
 			this.forEach(function (value, key) {
-				if (fn(clone(value), clone(key)) === true) {
-					result.push(tuple(key, value));
+				if (fn((0, _utility.clone)(value), (0, _utility.clone)(key)) === true) {
+					result.push((0, _deps.tuple)(key, value));
 				}
 			});
 
-			return tuple.apply(tuple, result);
+			return _deps.tuple.apply(_deps.tuple, result);
 		}
 	}, {
 		key: "forEach",
@@ -142,7 +146,7 @@ var Haro = (function () {
 			var output = undefined;
 
 			if (this.data.has(key)) {
-				output = tuple(key, this.data.get(key));
+				output = (0, _deps.tuple)(key, this.data.get(key));
 			}
 
 			return output;
@@ -175,7 +179,7 @@ var Haro = (function () {
 				}
 			} while (++i < nth);
 
-			return tuple.apply(tuple, list);
+			return _deps.tuple.apply(_deps.tuple, list);
 		}
 	}, {
 		key: "map",
@@ -183,30 +187,30 @@ var Haro = (function () {
 			var result = [];
 
 			this.forEach(function (value, key) {
-				result.push(tuple(key, fn(clone(value), clone(key))));
+				result.push((0, _deps.tuple)(key, fn((0, _utility.clone)(value), (0, _utility.clone)(key))));
 			});
 
-			return tuple.apply(tuple, result);
+			return _deps.tuple.apply(_deps.tuple, result);
 		}
 	}, {
 		key: "request",
 		value: function request(input) {
 			var config = arguments[1] === undefined ? {} : arguments[1];
 
-			var cfg = merge(this.config, config);
+			var cfg = (0, _utility.merge)(this.config, config);
 
-			return fetch(input, cfg).then(function (res) {
+			return (0, _deps.fetch)(input, cfg).then(function (res) {
 				return res[res.headers.get("content-type").indexOf("application/json") > -1 ? "json" : "text"]().then(function (arg) {
 					if (res.status === 0 || res.status >= 400) {
-						throw tuple(arg, res.status);
+						throw (0, _deps.tuple)(arg, res.status);
 					}
 
-					return tuple(arg, res.status);
+					return (0, _deps.tuple)(arg, res.status);
 				}, function (e) {
-					throw tuple(e.message, res.status);
+					throw (0, _deps.tuple)(e.message, res.status);
 				});
 			}, function (e) {
-				throw tuple(e.message, 0);
+				throw (0, _deps.tuple)(e.message, 0);
 			});
 		}
 	}, {
@@ -217,18 +221,18 @@ var Haro = (function () {
 			var batch = arguments[2] === undefined ? false : arguments[2];
 			var override = arguments[3] === undefined ? false : arguments[3];
 
-			var defer = deferred(),
+			var defer = (0, _utility.deferred)(),
 			    method = "post",
-			    ldata = clone(data),
+			    ldata = (0, _utility.clone)(data),
 			    next = undefined;
 
 			next = function () {
 				if (method === "post") {
 					++_this3.total;
 					_this3.registry.push(key);
-					_this3.versions.set(key, new Set());
+					_this3.versions.set(key, new _deps.Set());
 				} else {
-					_this3.versions.get(key).add(tuple(_this3.data.get(key)));
+					_this3.versions.get(key).add((0, _deps.tuple)(_this3.data.get(key)));
 				}
 
 				_this3.data.set(key, ldata);
@@ -236,12 +240,12 @@ var Haro = (function () {
 			};
 
 			if (key === undefined || key === null) {
-				key = this.key ? ldata[this.key] : uuid() || uuid();
+				key = this.key ? ldata[this.key] : (0, _utility.uuid)() || (0, _utility.uuid)();
 			} else if (this.data.has(key)) {
 				method = "put";
 
 				if (!override) {
-					ldata = merge(this.get(key)[1], ldata);
+					ldata = (0, _utility.merge)(this.get(key)[1], ldata);
 				}
 			}
 
@@ -260,7 +264,7 @@ var Haro = (function () {
 		value: function setUri(uri) {
 			var _this4 = this;
 
-			var defer = deferred();
+			var defer = (0, _utility.deferred)();
 
 			this.uri = uri;
 

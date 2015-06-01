@@ -1,3 +1,6 @@
+import { fetch, Map, Promise, Set, tuple } from "./deps";
+import { clone, deferred, merge, uuid } from "./utility";
+
 export class Haro {
 	constructor ( data ) {
 		this.data = new Map();

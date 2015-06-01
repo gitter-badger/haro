@@ -4,8 +4,8 @@ import Set from "es6-set";
 import fetch from "node-fetch";
 import tuple from "tiny-tuple";
 
-export { Promise as Promise_import };
-export { Map as Map_import };
-export { Set as Set_import };
-export { fetch as fetch_import };
-export { tuple as tuple_import };
+export { Promise };
+export { Map };
+export { Set };
+export { fetch };
+export { tuple };
