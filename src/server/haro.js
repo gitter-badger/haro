@@ -1,4 +1,5 @@
-import { fetch, Map, Promise, Set, tuple } from "./deps";
+import fetch from "node-fetch";
+import tuple from "tiny-tuple";
 import { clone, deferred, merge, uuid } from "./utility";
 
 export class Haro {

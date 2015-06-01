@@ -6,9 +6,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _deps = require("./deps");
+var _nodeFetch = require("node-fetch");
+
+var _nodeFetch2 = _interopRequireDefault(_nodeFetch);
+
+var _tinyTuple = require("tiny-tuple");
+
+var _tinyTuple2 = _interopRequireDefault(_tinyTuple);
 
 var _utility = require("./utility");
 
@@ -16,7 +24,7 @@ var Haro = (function () {
 	function Haro(data) {
 		_classCallCheck(this, Haro);
 
-		this.data = new _deps.Map();
+		this.data = new Map();
 		this.config = {
 			method: "get",
 			credentials: false,
@@ -30,7 +38,7 @@ var Haro = (function () {
 		this.source = "";
 		this.total = 0;
 		this.uri = "";
-		this.versions = new _deps.Map();
+		this.versions = new Map();
 
 		if (data) {
 			this.batch(data, "set");
@@ -55,7 +63,7 @@ var Haro = (function () {
 				});
 			}
 
-			_deps.Promise.all(promises).then(function (arg) {
+			Promise.all(promises).then(function (arg) {
 				defer.resolve(arg);
 			}, function (e) {
 				defer.reject(e);
@@ -129,11 +137,11 @@ var Haro = (function () {
 
 			this.forEach(function (value, key) {
 				if (fn((0, _utility.clone)(value), (0, _utility.clone)(key)) === true) {
-					result.push((0, _deps.tuple)(key, value));
+					result.push((0, _tinyTuple2["default"])(key, value));
 				}
 			});
 
-			return _deps.tuple.apply(_deps.tuple, result);
+			return _tinyTuple2["default"].apply(_tinyTuple2["default"], result);
 		}
 	}, {
 		key: "forEach",
@@ -146,7 +154,7 @@ var Haro = (function () {
 			var output = undefined;
 
 			if (this.data.has(key)) {
-				output = (0, _deps.tuple)(key, this.data.get(key));
+				output = (0, _tinyTuple2["default"])(key, this.data.get(key));
 			}
 
 			return output;
@@ -179,7 +187,7 @@ var Haro = (function () {
 				}
 			} while (++i < nth);
 
-			return _deps.tuple.apply(_deps.tuple, list);
+			return _tinyTuple2["default"].apply(_tinyTuple2["default"], list);
 		}
 	}, {
 		key: "map",
@@ -187,10 +195,10 @@ var Haro = (function () {
 			var result = [];
 
 			this.forEach(function (value, key) {
-				result.push((0, _deps.tuple)(key, fn((0, _utility.clone)(value), (0, _utility.clone)(key))));
+				result.push((0, _tinyTuple2["default"])(key, fn((0, _utility.clone)(value), (0, _utility.clone)(key))));
 			});
 
-			return _deps.tuple.apply(_deps.tuple, result);
+			return _tinyTuple2["default"].apply(_tinyTuple2["default"], result);
 		}
 	}, {
 		key: "request",
@@ -199,18 +207,18 @@ var Haro = (function () {
 
 			var cfg = (0, _utility.merge)(this.config, config);
 
-			return (0, _deps.fetch)(input, cfg).then(function (res) {
+			return (0, _nodeFetch2["default"])(input, cfg).then(function (res) {
 				return res[res.headers.get("content-type").indexOf("application/json") > -1 ? "json" : "text"]().then(function (arg) {
 					if (res.status === 0 || res.status >= 400) {
-						throw (0, _deps.tuple)(arg, res.status);
+						throw (0, _tinyTuple2["default"])(arg, res.status);
 					}
 
-					return (0, _deps.tuple)(arg, res.status);
+					return (0, _tinyTuple2["default"])(arg, res.status);
 				}, function (e) {
-					throw (0, _deps.tuple)(e.message, res.status);
+					throw (0, _tinyTuple2["default"])(e.message, res.status);
 				});
 			}, function (e) {
-				throw (0, _deps.tuple)(e.message, 0);
+				throw (0, _tinyTuple2["default"])(e.message, 0);
 			});
 		}
 	}, {
@@ -230,9 +238,9 @@ var Haro = (function () {
 				if (method === "post") {
 					++_this3.total;
 					_this3.registry.push(key);
-					_this3.versions.set(key, new _deps.Set());
+					_this3.versions.set(key, new Set());
 				} else {
-					_this3.versions.get(key).add((0, _deps.tuple)(_this3.data.get(key)));
+					_this3.versions.get(key).add((0, _tinyTuple2["default"])(_this3.data.get(key)));
 				}
 
 				_this3.data.set(key, ldata);

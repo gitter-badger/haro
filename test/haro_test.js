@@ -1,9 +1,10 @@
-var haro = require( "../lib/haro" ),
-    data = require( "./data.json" ),
-    tenso = require( "tenso" ),
-	server;
+var path = require( "path" ),
+    haro = require( path.join( __dirname, "../build/server/index" ) ),
+    data = require( path.join( __dirname, "data.json" ) );//,
+    //tenso = require( "tenso" ),
+	//server;
 
-server = tenso( {
+/*server = tenso( {
 	security: {
 		csrf: false
 	},
@@ -32,7 +33,7 @@ server = tenso( {
 			}
 		}
 	}
-} );
+} );*/
 
 exports["empty"] = {
 	setUp: function (done) {
@@ -226,7 +227,7 @@ exports["delete (batch)"] = {
 		});
 	}
 };
-
+/*
 exports["setUri"] = {
 	setUp: function (done) {
 		this.store = haro(null);
@@ -335,3 +336,4 @@ exports["update (wired / overwrite)"] = {
 		});
 	}
 };
+*/
