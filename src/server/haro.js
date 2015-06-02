@@ -1,49 +1,51 @@
-import fetch from "node-fetch";
-import tuple from "tiny-tuple";
-import { clone, deferred, merge, uuid } from "./utility";
+'use strict';
+
+import fetch from 'node-fetch';
+import tuple from 'tiny-tuple';
+import { clone, deferred, merge, uuid } from './utility';
 
 export class Haro {
-	constructor ( data ) {
+	constructor (data) {
 		this.data = new Map();
 		this.config = {
-			method: "get",
+			method: 'get',
 			credentials: false,
 			headers: {
-				accept: "application/json",
-				"content-type": "application/json"
+				accept: 'application/json',
+				'content-type': 'application/json'
 			}
 		};
 		this.registry = [];
-		this.key = "";
-		this.source = "";
+		this.key = '';
+		this.source = '';
 		this.total = 0;
-		this.uri = "";
+		this.uri = '';
 		this.versions = new Map();
 
-		if ( data ) {
-			this.batch( data, "set" );
+		if (data) {
+			this.batch(data, 'set');
 		}
 	}
 
-	batch ( args, type ) {
-		let defer = deferred(),
-		    promises = [];
+	batch (args, type) {
+		let defer = deferred();
+		let promises = [];
 
-		if ( type === "del" ) {
-			args.forEach( i => {
-				 promises.push( this.del( i, true ) );
-			} );
+		if (type === 'del') {
+			args.forEach(i => {
+				promises.push(this.del(i, true));
+			});
 		} else {
-			args.forEach( i => {
-				promises.push( this.set( null, i, true ) );
-			} );
+			args.forEach(i => {
+				promises.push(this.set(null, i, true));
+			});
 		}
 
-		Promise.all( promises ).then( function ( arg ) {
-			defer.resolve( arg );
-		}, function ( e ) {
-			defer.reject( e );
-		} );
+		Promise.all(promises).then(function (arg) {
+			defer.resolve(arg);
+		}, function (e) {
+			defer.reject(e);
+		});
 
 		return defer.promise;
 	}
@@ -57,40 +59,39 @@ export class Haro {
 		return this;
 	}
 
-	del ( key, batch=false ) {
-		let defer = deferred(),
-			index;
+	del (key, batch = false) {
+		let defer = deferred();
 
 		let next = () => {
-			index = this.registry.indexOf( key );
+			let index = this.registry.indexOf(key);
 
-			if ( index > -1 ) {
-				if ( index === 0 ) {
+			if (index > -1) {
+				if (index === 0) {
 					this.registry.shift();
-				} else if ( index === ( this.registry.length - 1 ) ) {
+				} else if (index === (this.registry.length - 1)) {
 					this.registry.pop();
 				} else {
-					this.registry.splice( index, 1 );
+					this.registry.splice(index, 1);
 				}
 
-				this.data.delete( key );
-				this.versions.delete( key );
+				this.data.delete(key);
+				this.versions.delete(key);
 				--this.total;
 			}
 
 			defer.resolve();
 		};
 
-		if ( this.data.has( key ) ) {
-			if ( !batch && this.uri ) {
-				this.request( this.uri.replace( /\?.*/, "" ) + "/" + key, {method: "delete"} ).then( next, function ( e ) {
-					defer.reject( e[0] || e );
-				} );
+		if (this.data.has(key)) {
+			if (!batch && this.uri) {
+				this.request(this.uri.replace(/\?.*/, '') + '/' + key, {method: 'delete'}).then(next, function (e) {
+					defer.reject(e[0] || e);
+				});
 			} else {
-				next()
+				next();
 			}
 		} else {
-			defer.reject( new Error( "Record not found" ) );
+			defer.reject(new Error('Record not found'));
 		}
 
 		return defer.promise;
@@ -100,27 +101,27 @@ export class Haro {
 		return this.data.entries();
 	}
 
-	filter ( fn ) {
+	filter (fn) {
 		let result = [];
 
-		this.forEach( function ( value, key ) {
-			if ( fn( clone( value ), clone( key ) ) === true ) {
-				result.push( tuple( key, value ) );
+		this.forEach(function (value, key) {
+			if (fn(clone(value), clone(key)) === true) {
+				result.push(tuple(key, value));
 			}
-		} );
+		});
 
-		return tuple.apply( tuple, result );
+		return tuple.apply(tuple, result);
 	}
 
-	forEach ( fn, ctx ) {
-		return this.data.forEach( fn, ctx );
+	forEach (fn, ctx) {
+		return this.data.forEach(fn, ctx);
 	}
 
-	get ( key ) {
+	get (key) {
 		let output;
 
-		if ( this.data.has( key ) ) {
-			output = tuple( key, this.data.get( key ) );
+		if (this.data.has(key)) {
+			output = tuple(key, this.data.get(key));
 		}
 
 		return output;
@@ -130,88 +131,89 @@ export class Haro {
 		return this.data.keys();
 	}
 
-	limit ( start=0, offset=0 ) {
-		let i = start,
-		    nth = start + offset,
-		    list = [],
-		    k;
+	limit (start = 0, offset = 0) {
+		let i = start;
+		let nth = start + offset;
+		let list = [];
+		let k;
 
-		if ( i < 0 || i >= nth ) {
-			throw new Error( "Invalid range" );
+		if (i < 0 || i >= nth) {
+			throw new Error('Invalid range');
 		}
 
 		do {
-			k = this.registry[ i ];
+			k = this.registry[i];
 
-			if ( k ) {
-				list.push( this.get( k ) );
+			if (k) {
+				list.push(this.get(k));
 			}
-		} while ( ++i < nth );
+		} while (++i < nth);
 
-		return tuple.apply( tuple, list );
+		return tuple.apply(tuple, list);
 	}
 
-	map ( fn ) {
+	map (fn) {
 		let result = [];
 
-		this.forEach( function ( value, key ) {
-			result.push( tuple( key, fn( clone( value ), clone( key ) ) ) );
-		} );
+		this.forEach(function (value, key) {
+			result.push(tuple(key, fn(clone(value), clone(key))));
+		});
 
-		return tuple.apply( tuple, result );
+		return tuple.apply(tuple, result);
 	}
 
-	request ( input, config={} ) {
-		let cfg = merge( this.config, config );
+	request (input, config = {}) {
+		let cfg = merge(this.config, config);
 
-		return fetch( input, cfg ).then( function( res ) {
-			return res[ res.headers.get( "content-type").indexOf( "application/json" ) > -1 ? "json" : "text" ]().then( function ( arg ) {
-				if ( res.status === 0 || res.status >= 400 ) {
-					throw tuple( arg, res.status );
+		return fetch(input, cfg).then(function (res) {
+			return res[res.headers.get('content-type').indexOf('application/json') > -1 ? 'json' : 'text']().then(function (arg) {
+				if (res.status === 0 || res.status >= 400) {
+					throw tuple(arg, res.status);
 				}
 
-				return tuple( arg, res.status );
-			}, function ( e ) {
-				throw tuple( e.message, res.status );
-			} );
-		}, function ( e ) {
-			throw tuple( e.message, 0 );
-		} );
+				return tuple(arg, res.status);
+			}, function (e) {
+				throw tuple(e.message, res.status);
+			});
+		}, function (e) {
+			throw tuple(e.message, 0);
+		});
 	}
 
-	set ( key, data, batch=false, override=false ) {
-		let defer = deferred(),
-		    method = "post",
-		    ldata = clone( data ),
-			next;
+	set (key, data, batch = false, override = false) {
+		let defer = deferred();
+		let method = 'post';
+		let lkey = clone(key === undefined ? null : key);
+		let ldata = clone(data);
 
-		next = () => {
-			if (method === "post" ) {
+		let next = () => {
+			if (method === 'post') {
 				++this.total;
-				this.registry.push( key );
-				this.versions.set( key, new Set() );
+				this.registry.push(lkey);
+				this.versions.set(lkey, new Set());
 			} else {
-				this.versions.get( key ).add( tuple( this.data.get( key ) ) );
+				this.versions.get(lkey).add(tuple(this.data.get(lkey)));
 			}
 
-			this.data.set( key, ldata );
-			defer.resolve( this.get( key ) );
+			this.data.set(lkey, ldata);
+			defer.resolve(this.get(lkey));
 		};
 
-		if ( key === undefined || key === null ) {
-			key = this.key ? ldata[ this.key ] : uuid() || uuid();
-		} else if ( this.data.has( key ) ) {
-			method = "put";
+		if (lkey === undefined || lkey === null) {
+			lkey = this.key ? ldata[this.key] : uuid() || uuid();
+		} else if (this.data.has(lkey)) {
+			method = 'put';
 
-			if ( !override ) {
-				ldata = merge( this.get( key )[ 1 ], ldata );
+			if (!override) {
+				ldata = merge(this.get(lkey)[1], ldata);
 			}
 		}
 
-		if ( !batch && this.uri ) {
-			this.request( this.uri.replace( /\?.*/, "" ) + "/" + key, { method: method, body: JSON.stringify( ldata ) } ).then( next, function ( e ) {
-				defer.reject( e[0] || e );
-			} );
+		if (!batch && this.uri) {
+			this.request(this.uri.replace(/\?.*/, '') + '/' + lkey,
+				{method: method, body: JSON.stringify(ldata)}).then(next, function (e) {
+				defer.reject(e[0] || e);
+			});
 		} else {
 			next();
 		}
@@ -219,33 +221,33 @@ export class Haro {
 		return defer.promise;
 	}
 
-	setUri ( uri ) {
+	setUri (uri) {
 		let defer = deferred();
 
 		this.uri = uri;
 
-		if ( this.uri ) {
-			this.request( this.uri ).then( arg => {
-				let data = arg[ 0 ];
+		if (this.uri) {
+			this.request(this.uri).then(arg => {
+				let data = arg[0];
 
-				if ( this.source ) {
+				if (this.source) {
 					try {
-						this.source.split( "." ).forEach( function ( i ) {
-							data = data[ i ];
-						} );
-					} catch ( e ) {
-						return defer.reject( e );
+						this.source.split('.').forEach(function (i) {
+							data = data[i];
+						});
+					} catch (e) {
+						return defer.reject(e);
 					}
 				}
 
-				this.batch( data, "set" ).then( function ( records ) {
-					defer.resolve( records );
-				}, function ( e ) {
-					defer.reject( e );
-				} );
-			}, function ( e ) {
-				defer.reject( e[0] || e );
-			} )
+				this.batch(data, 'set').then(function (records) {
+					defer.resolve(records);
+				}, function (e) {
+					defer.reject(e);
+				});
+			}, function (e) {
+				defer.reject(e[0] || e);
+			});
 		} else {
 			defer.resolve();
 		}

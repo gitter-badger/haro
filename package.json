@@ -9,7 +9,8 @@
     "build-server": "babel -d build/server src/server -s",
     "build-client": "browserify src/client/index.js -t babelify --outfile build/client/bundle.js",
     "build": "npm run clean && npm run build-server && npm build-client",
-    "test": "nodeunit test/haro_test.js"
+    "nodeunit": "nodeunit test/haro_test.js",
+    "test": "npm run lint && npm run nodeunit"
   },
   "repository": {
     "type": "git",
