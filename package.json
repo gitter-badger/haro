@@ -2,13 +2,13 @@
   "name": "haro",
   "version": "1.0.8",
   "description": "Harō is a modern immutable DataStore that can be wired to an API",
-  "main": "lib/haro.js",
+  "main": "buid/server/index.js",
   "scripts": {
     "lint": "eslint src",
     "clean": "rm -rf build/* && mkdir build/public && mkdir build/server && mkdir build/client",
     "build-server": "babel -d build/server src/server -s",
     "build-client": "browserify src/client/index.js -t babelify --outfile build/client/bundle.js",
-    "build": "npm run clean && npm run build-server && npm build-client",
+    "build": "npm run clean && npm run build-server && npm run build-client",
     "nodeunit": "nodeunit test/haro_test.js",
     "test": "npm run lint && npm run nodeunit"
   },

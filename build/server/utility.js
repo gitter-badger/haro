@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
 	value: true
 });
 exports.clone = clone;
@@ -26,8 +26,8 @@ function deferred() {
 }
 
 function merge(a, b) {
-	var c = clone(a),
-	    d = clone(b);
+	var c = clone(a);
+	var d = clone(b);
 
 	Object.keys(d).forEach(function (i) {
 		c[i] = d[i];
@@ -36,13 +36,13 @@ function merge(a, b) {
 	return c;
 }
 
-var r = [8, 9, "a", "b"];
+var r = [8, 9, 'a', 'b'];
 
 function s() {
 	return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
 }
 
 function uuid() {
-	return s() + s() + "-" + s() + "-4" + s().substr(0, 3) + "-" + r[Math.floor(Math.random() * 4)] + s().substr(0, 3) + "-" + s() + s() + s();
+	return s() + s() + '-' + s() + '-4' + s().substr(0, 3) + '-' + r[Math.floor(Math.random() * 4)] + s().substr(0, 3) + '-' + s() + s() + s();
 }
 //# sourceMappingURL=utility.js.map

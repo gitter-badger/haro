@@ -1,11 +1,13 @@
 /.idea/
 /node_modules/
-/lib/haro.min.js
-/lib/haro.min.js.map
+/build/client/
+/build/public/
 /src/
 /test/
+.eslintrc
 .git
 .gitignore
+.npm-debug.log
 .travis.yml
 CHANGELOG.md
 Gruntfile.js
