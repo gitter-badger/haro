@@ -1,5 +1,5 @@
 var path = require( "path" ),
-    haro = require( path.join( __dirname, "../build/server/index" ) ),
+    haro = require( path.join( __dirname, "../lib/server/index" ) ),
     data = require( path.join( __dirname, "data.json" ) );//,
     //tenso = require( "tenso" ),
 	//server;
