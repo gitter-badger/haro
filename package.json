@@ -10,7 +10,8 @@
     "build-client": "browserify lib/server/index.js -t babelify --outfile lib/client/bundle.js",
     "build": "npm run clean && npm run build-server && npm run build-client",
     "nodeunit": "nodeunit test/haro_test.js",
-    "package": "npm run lint && npm run build && npm run nodeunit"
+    "package": "npm run lint && npm run build && npm run nodeunit",
+    "test": "npm run lint && npm run nodeunit"
   },
   "repository": {
     "type": "git",
@@ -35,8 +36,7 @@
     "babelify": "^6.1.2",
     "browserify": "^10.2.3",
     "eslint": "^0.22.1",
-    "nodeunit": "^0.9.1",
-    "tenso": "^1.5.1"
+    "nodeunit": "^0.9.1"
   },
   "dependencies": {
     "core-js": "^0.9.13",
